@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sidebar / Navbar / Header / Footer Example</title>
+    <style>
+        :root{
+            --sidebar-w: 240px;
+            --bg:#f6f8fb;
+            --accent:#2563eb;
+            --muted:#6b7280;
+            --card:#ffffff;
+        }
+        html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#111}
+        /* Layout */
+        .app {
+            display:grid;
+            grid-template-columns: var(--sidebar-w) 1fr;
+            grid-template-rows: 56px 1fr auto; /* navbar, main, footer */
+            min-height:100vh;
+        }
+        /* Responsive: collapse sidebar under 800px */
+        @media (max-width:800px){
+            .app { grid-template-columns: 1fr; grid-template-rows: 56px 1fr auto; }
+            .sidebar { position:fixed; inset:56px 0 auto 0; transform:translateX(-110%); transition:transform .22s ease; z-index:30; width:var(--sidebar-w); box-shadow:0 8px 24px rgba(0,0,0,.12); }
+            .sidebar.open { transform:translateX(0); }
+            .backdrop { display:block; position:fixed; inset:56px 0 0 0; background:rgba(0,0,0,.28); z-index:20; }
+        }
+        /* Navbar (top) */
+        .navbar {
+            grid-column:1/-1;
+            height:56px;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding:0 16px;
+            background:linear-gradient(90deg, #fff, #fbfdff);
+            border-bottom:1px solid rgba(0,0,0,.04);
+            position:sticky;
+            top:0;
+            z-index:40;
+        }
+        .brand { display:flex; align-items:center; gap:10px; font-weight:600; color:var(--accent); }
+        .nav-actions { margin-left:auto; display:flex; gap:8px; align-items:center;}
+        button.icon {
+            background:transparent;border:0;padding:8px;border-radius:8px;cursor:pointer;color:var(--muted);
+        }
+        /* Sidebar (left) */
+        .sidebar {
+            background:var(--card);
+            border-right:1px solid rgba(0,0,0,.04);
+            padding:16px;
+            overflow:auto;
+        }
+        .logo { font-weight:700; color:var(--accent); margin-bottom:14px; display:inline-block;}
+        .nav-list { list-style:none;padding:0;margin:0; display:flex; flex-direction:column; gap:6px;}
+        .nav-list a {
+            display:flex; gap:10px; align-items:center; padding:10px 12px;border-radius:8px;color:#111;text-decoration:none;
+        }
+        .nav-list a:hover { background:#f3f6ff; color:var(--accent); }
+        .sidebar .section-title { margin:18px 8px 8px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+        /* Main content */
+        .main {
+            padding:20px;
+            background:transparent;
+            min-height:400px;
+        }
+        .header-card {
+            background:linear-gradient(180deg,#fff,#fbfdff);
+            border-radius:12px;
+            padding:20px;
+            box-shadow:0 6px 18px rgba(8,20,50,.05);
+            margin-bottom:18px;
+        }
+        .grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:12px;
+        }
+        .card {
+            background:var(--card);
+            padding:14px;
+            border-radius:10px;
+            box-shadow:0 6px 18px rgba(8,20,50,.04);
+        }
+        /* Footer */
+        .footer {
+            grid-column:1/-1;
+            padding:12px 16px;
+            background:linear-gradient(90deg,#fff,#fbfdff);
+            border-top:1px solid rgba(0,0,0,.04);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            font-size:13px;
+            color:var(--muted);
+        }
+        /* Small helpers */
+        .muted{color:var(--muted);font-size:13px}
+        .hide-desktop{display:none}
+        @media (max-width:800px){ .hide-desktop{display:inline-block} .show-mobile{display:none} }
+    </style>
+</head>
+<body>
+    <div class="app" id="app">
+        <!-- Top navbar -->
+        <header class="navbar" role="banner">
+            <button class="icon" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+            <div class="brand">DemoProject</div>
+            <div class="muted show-mobile" style="margin-left:8px">Overview</div>
+            <div class="nav-actions">
+                <button class="icon" title="Search">🔍</button>
+                <button class="icon" title="Notifications">🔔</button>
+                <button class="icon" title="Account">👤</button>
+            </div>
+        </header>
+
+        <!-- Sidebar (navigation) -->
+        <aside class="sidebar" id="sidebar" role="navigation" aria-label="Primary">
+            <div class="logo">DemoProject</div>
+
+            <div class="section-title">Main</div>
+            <ul class="nav-list">
+                <li><a href="#">🏠 Dashboard</a></li>
+                <li><a href="#">📊 Analytics</a></li>
+                <li><a href="#">💬 Messages</a></li>
+                <li><a href="#">📁 Projects</a></li>
+            </ul>
+
+            <div class="section-title">Settings</div>
+            <ul class="nav-list">
+                <li><a href="#">⚙️ Preferences</a></li>
+                <li><a href="#">🔒 Security</a></li>
+                <li><a href="#">❓ Help</a></li>
+            </ul>
+        </aside>
+
+        <!-- Backdrop for mobile when sidebar is open -->
+        <div class="backdrop" id="backdrop" style="display:none" tabindex="-1"></div>
+
+        <!-- Main content area -->
+        <main class="main" role="main">
+            <section class="header-card">
+                <h1 style="margin:0 0 8px 0">Welcome</h1>
+                <p class="muted" style="margin:0">This layout includes a responsive sidebar, a top navbar, a prominent header card, and a footer.</p>
+            </section>
+
+            <section class="grid" aria-label="Content cards">
+                <article class="card">
+                    <h3 style="margin:0 0 8px 0">Card 1</h3>
+                    <p class="muted" style="margin:0">Short description or statistics.</p>
+                </article>
+                <article class="card">
+                    <h3 style="margin:0 0 8px 0">Card 2</h3>
+                    <p class="muted" style="margin:0">Short description or statistics.</p>
+                </article>
+                <article class="card">
+                    <h3 style="margin:0 0 8px 0">Card 3</h3>
+                    <p class="muted" style="margin:0">Short description or statistics.</p>
+                </article>
+                <article class="card">
+                    <h3 style="margin:0 0 8px 0">Card 4</h3>
+                    <p class="muted" style="margin:0">Short description or statistics.</p>
+                </article>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer" role="contentinfo">
+            <div>© <span id="year"></span> DemoProject</div>
+            <div class="muted">Made with ♥ — Version 1.0</div>
+        </footer>
+    </div>
+
+    <script>
+        // Basic sidebar toggle for small screens
+        const sidebar = document.getElementById('sidebar');
+        const toggle = document.getElementById('sidebarToggle');
+        const backdrop = document.getElementById('backdrop');
+        const year = document.getElementById('year');
+
+        year.textContent = new Date().getFullYear();
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            backdrop.style.display = 'block';
+            toggle.setAttribute('aria-expanded','true');
+        }
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            backdrop.style.display = 'none';
+            toggle.setAttribute('aria-expanded','false');
+        }
+
+        toggle.addEventListener('click', () => {
+            if (sidebar.classList.contains('open')) closeSidebar();
+            else openSidebar();
+        });
+        backdrop.addEventListener('click', closeSidebar);
+
+        // Close sidebar on resize to large screens
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 800) {
+                sidebar.classList.remove('open');
+                backdrop.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
